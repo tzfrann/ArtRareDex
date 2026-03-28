@@ -467,298 +467,139 @@
 </footer>
 
 <script>
-// ── DATOS ─────────────────────────────────────────────────────────────
+// ── CONFIGURACIÓN Y DATOS ──────────────────────────────────────────────
+const CARDS_DIR = "cartas/";
+const SPRITE_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
+
+// Estructura de regiones (mantenemos la que ya tenías)
 const REGIONS = [
-  {
-    id: "Kanto", gridId: "gridKanto", headerId: "headerKanto",
-    start: 1,
-    names: [
-      "Bulbasaur","Ivysaur","Venusaur","Charmander","Charmeleon","Charizard",
-      "Squirtle","Wartortle","Blastoise","Caterpie","Metapod","Butterfree",
-      "Weedle","Kakuna","Beedrill","Pidgey","Pidgeotto","Pidgeot",
-      "Rattata","Raticate","Spearow","Fearow","Ekans","Arbok",
-      "Pikachu","Raichu","Sandshrew","Sandslash","Nidoran♀","Nidorina",
-      "Nidoqueen","Nidoran♂","Nidorino","Nidoking","Clefairy","Clefable",
-      "Vulpix","Ninetales","Jigglypuff","Wigglytuff","Zubat","Golbat",
-      "Oddish","Gloom","Vileplume","Paras","Parasect","Venonat",
-      "Venomoth","Diglett","Dugtrio","Meowth","Persian","Psyduck",
-      "Golduck","Mankey","Primeape","Growlithe","Arcanine","Poliwag",
-      "Poliwhirl","Poliwrath","Abra","Kadabra","Alakazam","Machop",
-      "Machoke","Machamp","Bellsprout","Weepinbell","Victreebel","Tentacool",
-      "Tentacruel","Geodude","Graveler","Golem","Ponyta","Rapidash",
-      "Slowpoke","Slowbro","Magnemite","Magneton","Farfetch'd","Doduo",
-      "Dodrio","Seel","Dewgong","Grimer","Muk","Shellder",
-      "Cloyster","Gastly","Haunter","Gengar","Onix","Drowzee",
-      "Hypno","Krabby","Kingler","Voltorb","Electrode","Exeggcute",
-      "Exeggutor","Cubone","Marowak","Hitmonlee","Hitmonchan","Lickitung",
-      "Koffing","Weezing","Rhyhorn","Rhydon","Chansey","Tangela",
-      "Kangaskhan","Horsea","Seadra","Goldeen","Seaking","Staryu",
-      "Starmie","Mr. Mime","Scyther","Jynx","Electabuzz","Magmar",
-      "Pinsir","Tauros","Magikarp","Gyarados","Lapras","Ditto",
-      "Eevee","Vaporeon","Jolteon","Flareon","Porygon","Omanyte",
-      "Omastar","Kabuto","Kabutops","Aerodactyl","Snorlax","Articuno",
-      "Zapdos","Moltres","Dratini","Dragonair","Dragonite","Mewtwo","Mew"
-    ]
-  },
-  {
-    id: "Johto", gridId: "gridJohto", headerId: "headerJohto",
-    start: 152,
-    names: [
-      "Chikorita","Bayleef","Meganium","Cyndaquil","Quilava","Typhlosion",
-      "Totodile","Croconaw","Feraligatr","Sentret","Furret","Hoothoot",
-      "Noctowl","Ledyba","Ledian","Spinarak","Ariados","Crobat",
-      "Chinchou","Lanturn","Pichu","Cleffa","Igglybuff","Togepi",
-      "Togetic","Natu","Xatu","Mareep","Flaaffy","Ampharos",
-      "Bellossom","Marill","Azumarill","Sudowoodo","Politoed","Hoppip",
-      "Skiploom","Jumpluff","Aipom","Sunkern","Sunflora","Yanma",
-      "Wooper","Quagsire","Espeon","Umbreon","Murkrow","Slowking",
-      "Misdreavus","Unown","Wobbuffet","Girafarig","Pineco","Forretress",
-      "Dunsparce","Gligar","Steelix","Snubbull","Granbull","Qwilfish",
-      "Scizor","Shuckle","Heracross","Sneasel","Teddiursa","Ursaring",
-      "Slugma","Magcargo","Swinub","Piloswine","Corsola","Remoraid",
-      "Octillery","Delibird","Mantine","Skarmory","Houndour","Houndoom",
-      "Kingdra","Phanpy","Donphan","Porygon2","Stantler","Smeargle",
-      "Tyrogue","Hitmontop","Smoochum","Elekid","Magby","Miltank",
-      "Blissey","Raikou","Entei","Suicune","Larvitar","Pupitar",
-      "Tyranitar","Lugia","Ho-oh","Celebi"
-    ]
-  }
-  ,
-  {
-    id: "Hoenn", gridId: "gridHoenn", headerId: "headerHoenn",
-    start: 252,
-    names: [
-      "Treecko","Grovyle","Sceptile","Torchic","Combusken","Blaziken",
-      "Mudkip","Marshtomp","Swampert","Poochyena","Mightyena","Zigzagoon",
-      "Linoone","Wurmple","Silcoon","Beautifly","Cascoon","Dustox",
-      "Lotad","Lombre","Ludicolo","Seedot","Nuzleaf","Shiftry",
-      "Taillow","Swellow","Wingull","Pelipper","Ralts","Kirlia",
-      "Gardevoir","Surskit","Masquerain","Shroomish","Breloom","Slakoth",
-      "Vigoroth","Slaking","Nincada","Ninjask","Shedinja","Whismur",
-      "Loudred","Exploud","Makuhita","Hariyama","Azurill","Nosepass",
-      "Skitty","Delcatty","Sableye","Mawile","Aron","Lairon",
-      "Aggron","Meditite","Medicham","Electrike","Manectric","Plusle",
-      "Minun","Volbeat","Illumise","Roselia","Gulpin","Swalot",
-      "Carvanha","Sharpedo","Wailmer","Wailord","Numel","Camerupt",
-      "Torkoal","Spoink","Grumpig","Spinda","Trapinch","Vibrava",
-      "Flygon","Cacnea","Cacturne","Swablu","Altaria","Zangoose",
-      "Seviper","Lunatone","Solrock","Barboach","Whiscash","Corphish",
-      "Crawdaunt","Baltoy","Claydol","Lileep","Cradily","Anorith",
-      "Armaldo","Feebas","Milotic","Castform","Kecleon","Shuppet",
-      "Banette","Duskull","Dusclops","Tropius","Chimecho","Absol",
-      "Wynaut","Snorunt","Glalie","Spheal","Sealeo","Walrein",
-      "Clamperl","Huntail","Gorebyss","Relicanth","Luvdisc","Bagon",
-      "Shelgon","Salamence","Beldum","Metang","Metagross","Regirock",
-      "Regice","Registeel","Latias","Latios","Kyogre","Groudon",
-      "Rayquaza","Jirachi","Deoxys"
-    ]
-  }
-  ,
-  {
-    id: "Sinnoh", gridId: "gridSinnoh", headerId: "headerSinnoh",
-    start: 387,
-    names: [
-      "Turtwig","Grotle","Torterra","Chimchar","Monferno","Infernape",
-      "Piplup","Prinplup","Empoleon","Starly","Staravia","Staraptor",
-      "Bidoof","Bibarel","Kricketot","Kricketune","Shinx","Luxio",
-      "Luxray","Budew","Roserade","Cranidos","Rampardos","Shieldon",
-      "Bastiodon","Burmy","Wormadam","Mothim","Combee","Vespiquen",
-      "Pachirisu","Buizel","Floatzel","Cherubi","Cherrim","Shellos",
-      "Gastrodon","Ambipom","Drifloon","Drifblim","Buneary","Lopunny",
-      "Mismagius","Honchkrow","Glameow","Purugly","Chingling","Stunky",
-      "Skuntank","Bronzor","Bronzong","Bonsly","Mime Jr.","Happiny",
-      "Chatot","Spiritomb","Gible","Gabite","Garchomp","Munchlax",
-      "Riolu","Lucario","Hippopotas","Hippowdon","Skorupi","Drapion",
-      "Croagunk","Toxicroak","Carnivine","Finneon","Lumineon","Mantyke",
-      "Snover","Abomasnow","Weavile","Magnezone","Lickilicky","Rhyperior",
-      "Tangrowth","Electivire","Magmortar","Togekiss","Yanmega","Leafeon",
-      "Glaceon","Gliscor","Mamoswine","Porygon-Z","Gallade","Probopass",
-      "Dusknoir","Froslass","Rotom","Uxie","Mesprit","Azelf",
-      "Dialga","Palkia","Heatran","Regigigas","Giratina","Cresselia",
-      "Phione","Manaphy","Darkrai","Shaymin","Arceus"
-    ]
-  }
-  ,
-  {
-    id: "Unova", gridId: "gridUnova", headerId: "headerUnova",
-    start: 494,
-    names: [
-      "Victini","Snivy","Servine","Serperior","Tepig","Pignite","Emboar",
-      "Oshawott","Dewott","Samurott","Patrat","Watchog","Lillipup","Herdier",
-      "Stoutland","Purrloin","Liepard","Pansage","Simisage","Pansear","Simisear",
-      "Panpour","Simipour","Munna","Musharna","Pidove","Tranquill","Unfezant",
-      "Blitzle","Zebstrika","Roggenrola","Boldore","Gigalith","Woobat","Swoobat",
-      "Drilbur","Excadrill","Audino","Timburr","Gurdurr","Conkeldurr","Tympole",
-      "Palpitoad","Seismitoad","Throh","Sawk","Sewaddle","Swadloon","Leavanny",
-      "Venipede","Whirlipede","Scolipede","Cottonee","Whimsicott","Petilil",
-      "Lilligant","Basculin","Sandile","Krokorok","Krookodile","Darumaka",
-      "Darmanitan","Maractus","Dwebble","Crustle","Scraggy","Scrafty",
-      "Sigilyph","Yamask","Cofagrigus","Tirtouga","Carracosta","Archen","Archeops",
-      "Trubbish","Garbodor","Zorua","Zoroark","Minccino","Cinccino","Gothita",
-      "Gothorita","Gothitelle","Solosis","Duosion","Reuniclus","Ducklett",
-      "Swanna","Vanillite","Vanillish","Vanilluxe","Deerling","Sawsbuck",
-      "Emolga","Karrablast","Escavalier","Foongus","Amoonguss","Frillish",
-      "Jellicent","Alomomola","Joltik","Galvantula","Ferroseed","Ferrothorn",
-      "Klink","Klang","Klinklang","Tynamo","Eelektrik","Eelektross","Elgyem",
-      "Beheeyem","Litwick","Lampent","Chandelure","Axew","Fraxure","Haxorus",
-      "Cubchoo","Beartic","Cryogonal","Shelmet","Accelgor","Stunfisk",
-      "Mienfoo","Mienshao","Druddigon","Golett","Golurk","Pawniard","Bisharp",
-      "Bouffalant","Rufflet","Braviary","Vullaby","Mandibuzz","Heatmor",
-      "Durant","Deino","Zweilous","Hydreigon","Larvesta","Volcarona",
-      "Cobalion","Terrakion","Virizion","Tornadus","Thundurus","Reshiram",
-      "Zekrom","Landorus","Kyurem","Keldeo","Meloetta","Genesect"
-    ]
-  }
-  ,
-  {
-    id: "Kalos", gridId: "gridKalos", headerId: "headerKalos", start: 650,
-    names: ["Chespin","Quilladin","Chesnaught","Fennekin","Braixen","Delphox","Froakie","Frogadier","Greninja","Bunnelby","Diggersby","Fletchling","Fletchinder","Talonflame","Scatterbug","Spewpa","Vivillon","Litleo","Pyroar","Flabébé","Floette","Florges","Skiddo","Gogoat","Pancham","Pangoro","Furfrou","Espurr","Meowstic","Honedge","Doublade","Aegislash","Spritzee","Aromatisse","Swirlix","Slurpuff","Inkay","Malamar","Binacle","Barbaracle","Skrelp","Dragalge","Clauncher","Clawitzer","Helioptile","Heliolisk","Tyrunt","Tyrantrum","Amaura","Aurorus","Sylveon","Hawlucha","Dedenne","Carbink","Goomy","Sliggoo","Goodra","Klefki","Phantump","Trevenant","Pumpkaboo","Gourgeist","Bergmite","Avalugg","Noibat","Noivern","Xerneas","Yveltal","Zygarde","Diancie","Hoopa","Volcanion"]
-  },
-  {
-    id: "Alola", gridId: "gridAlola", headerId: "headerAlola", start: 722,
-    names: ["Rowlet","Dartrix","Decidueye","Litten","Torracat","Incineroar","Popplio","Brionne","Primarina","Pikipek","Trumbeak","Toucannon","Yungoos","Gumshoos","Grubbin","Charjabug","Vikavolt","Crabrawler","Crabominable","Oricorio","Cutiefly","Ribombee","Rockruff","Lycanroc","Wishiwashi","Mareanie","Toxapex","Mudbray","Mudsdale","Dewpider","Araquanid","Fomantis","Lurantis","Morelull","Shiinotic","Salandit","Salazzle","Stufful","Bewear","Bounsweet","Steenee","Tsareena","Comfey","Oranguru","Passimian","Wimpod","Golisopod","Sandygast","Palossand","Pyukumuku","Type: Null","Silvally","Minior","Komala","Turtonator","Togedemaru","Mimikyu","Bruxish","Drampa","Dhelmise","Jangmo-o","Hakamo-o","Kommo-o","Tapu Koko","Tapu Lele","Tapu Bulu","Tapu Fini","Cosmog","Cosmoem","Solgaleo","Lunala","Nihilego","Buzzwole","Pheromosa","Xurkitree","Celesteela","Kartana","Guzzlord","Necrozma","Magearna","Marshadow","Poipole","Naganadel","Stakataka","Blacephalon","Zeraora","Meltan","Melmetal"]
-  },
-  {
-    id: "Galar", gridId: "gridGalar", headerId: "headerGalar", start: 810,
-    names: ["Grookey","Thackey","Rillaboom","Scorbunny","Raboot","Cinderace","Sobble","Drizzile","Inteleon","Skwovet","Greedent","Rookidee","Corvisquire","Corviknight","Blipbug","Dottler","Orbeetle","Nickit","Thievul","Gossifleur","Eldegoss","Wooloo","Dubwool","Chewtle","Drednaw","Yamper","Boltund","Rolycoly","Carkol","Coalossal","Applin","Flapple","Appletun","Silicobra","Sandaconda","Cramorant","Arrokuda","Barraskewda","Toxel","Toxtricity","Sizzlipede","Centiskorch","Clobbopus","Grapploct","Sinistea","Polteageist","Hatenna","Hattrem","Hatterene","Impidimp","Morgrem","Grimmsnarl","Obstagoon","Perrserker","Cursola","Sirfetch'd","Mr. Rime","Runerigus","Milcery","Alcremie","Falinks","Pincurchin","Snom","Frosmoth","Stonjourner","Eiscue","Indeedee","Morpeko","Cufant","Copperajah","Dracozolt","Arctozolt","Dracovish","Arctovish","Duraludon","Dreepy","Drakloak","Dragapult","Zacian","Zamazenta","Eternatus","Kubfu","Urshifu","Zarude","Regieleki","Regidrago","Glastrier","Spectrier","Calyrex","Wyrdeer","Kleavor","Ursaluna","Basculegion","Sneasler","Overqwil","Enamorus"]
-  },
-  {
-    id: "Paldea", gridId: "gridPaldea", headerId: "headerPaldea", start: 906,
-    names: ["Sprigatito","Floragato","Meowscarada","Fuecoco","Crocalor","Skeledirge","Quaxly","Quaxwell","Quaquaval","Lechonk","Oinkologne","Tarountula","Spidops","Nymble","Lokix","Pawmi","Pawmo","Pawmot","Tandemaus","Maushold","Fidough","Dachsbun","Smoliv","Dolliv","Arboliva","Squawkabilly","Nacli","Naclstack","Garganacl","Charcadet","Armarouge","Ceruledge","Tadbulb","Bellibolt","Wattrel","Kilowattrel","Maschiff","Mabosstiff","Shroodle","Grafaiai","Bramblin","Brambleghast","Toedscool","Toedscruel","Klawf","Capsakid","Scovillain","Rellor","Rabsca","Flittle","Espathra","Tinkatink","Tinkatuff","Tinkaton","Wiglett","Wugtrio","Bombirdier","Finizen","Palafin","Varoom","Revavroom","Cyclizar","Orthworm","Glimmet","Glimmora","Greavard","Houndstone","Flamigo","Cetoddle","Cetitan","Veluza","Dondozo","Tatsugiri","Annihilape","Clodsire","Farigiraf","Dudunsparce","Kingambit","Great Tusk","Scream Tail","Brute Bonnet","Flutter Mane","Slither Wing","Sandy Shocks","Iron Treads","Iron Bundle","Iron Hands","Iron Jugulis","Iron Moth","Iron Valiant","Frigibax","Arctibax","Baxcalibur","Gimmighoul","Gholdengo","Wo-Chien","Chien-Pao","Ting-Lu","Chi-Yu","Roaring Moon","Iron Valiant","Koraidon","Miraidon","Walking Wake","Iron Leaves","Dipplin","Poltchageist","Sinistcha","Okidogi","Munkidori","Fezandipiti","Ogerpon","Archaludon","Hydrapple","Gouging Fire","Raging Bolt","Iron Boulder","Iron Crown","Terapagos","Pecharunt"]
-  }
+  { id: "Kanto", gridId: "gridKanto", headerId: "headerKanto", start: 1, names: ["Bulbasaur","Ivysaur","Venusaur","Charmander","Charmeleon","Charizard","Squirtle","Wartortle","Blastoise","Caterpie","Metapod","Butterfree","Weedle","Kakuna","Beedrill","Pidgey","Pidgeotto","Pidgeot","Rattata","Raticate","Spearow","Fearow","Ekans","Arbok","Pikachu","Raichu","Sandshrew","Sandslash","Nidoran♀","Nidorina","Nidoqueen","Nidoran♂","Nidorino","Nidoking","Clefairy","Clefable","Vulpix","Ninetales","Jigglypuff","Wigglytuff","Zubat","Golbat","Oddish","Gloom","Vileplume","Paras","Parasect","Venonat","Venomoth","Diglett","Dugtrio","Meowth","Persian","Psyduck","Golduck","Mankey","Primeape","Growlithe","Arcanine","Poliwag","Poliwhirl","Poliwrath","Abra","Kadabra","Alakazam","Machop","Machoke","Machamp","Bellsprout","Weepinbell","Victreebel","Tentacool","Tentacruel","Geodude","Graveler","Golem","Ponyta","Rapidash","Slowpoke","Slowbro","Magnemite","Magneton","Farfetch'd","Doduo","Dodrio","Seel","Dewgong","Grimer","Muk","Shellder","Cloyster","Gastly","Haunter","Gengar","Onix","Drowzee","Hypno","Krabby","Kingler","Voltorb","Electrode","Exeggcute","Exeggutor","Cubone","Marowak","Hitmonlee","Hitmonchan","Lickitung","Koffing","Weezing","Rhyhorn","Rhydon","Chansey","Tangela","Kangaskhan","Horsea","Seadra","Goldeen","Seaking","Staryu","Starmie","Mr. Mime","Scyther","Jynx","Electabuzz","Magmar","Pinsir","Tauros","Magikarp","Gyarados","Lapras","Ditto","Eevee","Vaporeon","Jolteon","Flareon","Porygon","Omanyte","Omastar","Kabuto","Kabutops","Aerodactyl","Snorlax","Articuno","Zapdos","Moltres","Dratini","Dragonair","Dragonite","Mewtwo","Mew"] },
+  { id: "Johto", gridId: "gridJohto", headerId: "headerJohto", start: 152, names: ["Chikorita","Bayleef","Meganium","Cyndaquil","Quilava","Typhlosion","Totodile","Croconaw","Feraligatr","Sentret","Furret","Hoothoot","Noctowl","Ledyba","Ledian","Spinarak","Ariados","Crobat","Chinchou","Lanturn","Pichu","Cleffa","Igglybuff","Togepi","Togetic","Natu","Xatu","Mareep","Flaaffy","Ampharos","Bellossom","Marill","Azumarill","Sudowoodo","Politoed","Hoppip","Skiploom","Jumpluff","Aipom","Sunkern","Sunflora","Yanma","Wooper","Quagsire","Espeon","Umbreon","Murkrow","Slowking","Misdreavus","Unown","Wobbuffet","Girafarig","Pineco","Forretress","Dunsparce","Gligar","Steelix","Snubbull","Granbull","Qwilfish","Scizor","Shuckle","Heracross","Sneasel","Teddiursa","Ursaring","Slugma","Magcargo","Swinub","Piloswine","Corsola","Remoraid","Octillery","Delibird","Mantine","Skarmory","Houndour","Houndoom","Kingdra","Phanpy","Donphan","Porygon2","Stantler","Smeargle","Tyrogue","Hitmontop","Smoochum","Elekid","Magby","Miltank","Blissey","Raikou","Entei","Suicune","Larvitar","Pupitar","Tyranitar","Lugia","Ho-oh","Celebi"] },
+  { id: "Hoenn", gridId: "gridHoenn", headerId: "headerHoenn", start: 252, names: ["Treecko","Grovyle","Sceptile","Torchic","Combusken","Blaziken","Mudkip","Marshtomp","Swampert","Poochyena","Mightyena","Zigzagoon","Linoone","Wurmple","Silcoon","Beautifly","Cascoon","Dustox","Lotad","Lombre","Ludicolo","Seedot","Nuzleaf","Shiftry","Taillow","Swellow","Wingull","Pelipper","Ralts","Kirlia","Gardevoir","Surskit","Masquerain","Shroomish","Breloom","Slakoth","Vigoroth","Slaking","Nincada","Ninjask","Shedinja","Whismur","Loudred","Exploud","Makuhita","Hariyama","Azurill","Nosepass","Skitty","Delcatty","Sableye","Mawile","Aron","Lairon","Aggron","Meditite","Medicham","Electrike","Manectric","Plusle","Minun","Volbeat","Illumise","Roselia","Gulpin","Swalot","Carvanha","Sharpedo","Wailmer","Wailord","Numel","Camerupt","Torkoal","Spoink","Grumpig","Spinda","Trapinch","Vibrava","Flygon","Cacnea","Cacturne","Swablu","Altaria","Zangoose","Seviper","Lunatone","Solrock","Barboach","Whiscash","Corphish","Crawdaunt","Baltoy","Claydol","Lileep","Cradily","Anorith","Armaldo","Feebas","Milotic","Castform","Kecleon","Shuppet","Banette","Duskull","Dusclops","Tropius","Chimecho","Absol","Wynaut","Snorunt","Glalie","Spheal","Sealeo","Walrein","Clamperl","Huntail","Gorebyss","Relicanth","Luvdisc","Bagon","Shelgon","Salamence","Beldum","Metang","Metagross","Regirock","Regice","Registeel","Latias","Latios","Kyogre","Groudon","Rayquaza","Jirachi","Deoxys"] },
+  { id: "Sinnoh", gridId: "gridSinnoh", headerId: "headerSinnoh", start: 387, names: ["Turtwig","Grotle","Torterra","Chimchar","Monferno","Infernape","Piplup","Prinplup","Empoleon","Starly","Staravia","Staraptor","Bidoof","Bibarel","Kricketot","Kricketune","Shinx","Luxio","Luxray","Budew","Roserade","Cranidos","Rampardos","Shieldon","Bastiodon","Burmy","Wormadam","Mothim","Combee","Vespiquen","Pachirisu","Buizel","Floatzel","Cherubi","Cherrim","Shellos","Gastrodon","Ambipom","Drifloon","Drifblim","Buneary","Lopunny","Mismagius","Honchkrow","Glameow","Purugly","Chingling","Stunky","Skuntank","Bronzor","Bronzong","Bonsly","Mime Jr.","Happiny","Chatot","Spiritomb","Gible","Gabite","Garchomp","Munchlax","Riolu","Lucario","Hippopotas","Hippowdon","Skorupi","Drapion","Croagunk","Toxicroak","Carnivine","Finneon","Lumineon","Mantyke","Snover","Abomasnow","Weavile","Magnezone","Lickilicky","Rhyperior","Tangrowth","Electivire","Magmortar","Togekiss","Yanmega","Leafeon","Glaceon","Gliscor","Mamoswine","Porygon-Z","Gallade","Probopass","Dusknoir","Froslass","Rotom","Uxie","Mesprit","Azelf","Dialga","Palkia","Heatran","Regigigas","Giratina","Cresselia","Phione","Manaphy","Darkrai","Shaymin","Arceus"] },
+  { id: "Unova", gridId: "gridUnova", headerId: "headerUnova", start: 494, names: ["Victini","Snivy","Servine","Serperior","Tepig","Pignite","Emboar","Oshawott","Dewott","Samurott","Patrat","Watchog","Lillipup","Herdier","Stoutland","Purrloin","Liepard","Pansage","Simisage","Pansear","Simisear","Panpour","Simipour","Munna","Musharna","Pidove","Tranquill","Unfezant","Blitzle","Zebstrika","Roggenrola","Boldore","Gigalith","Woobat","Swoobat","Drilbur","Excadrill","Audino","Timburr","Gurdurr","Conkeldurr","Tympole","Palpitoad","Seismitoad","Throh","Sawk","Sewaddle","Swadloon","Leavanny","Venipede","Whirlipede","Scolipede","Cottonee","Whimsicott","Petilil","Lilligant","Basculin","Sandile","Krokorok","Krookodile","Darumaka","Darmanitan","Maractus","Dwebble","Crustle","Scraggy","Scrafty","Sigilyph","Yamask","Cofagrigus","Tirtouga","Carracosta","Archen","Archeops","Trubbish","Garbodor","Zorua","Zoroark","Minccino","Cinccino","Gothita","Gothorita","Gothitelle","Solosis","Duosion","Reuniclus","Ducklett","Swanna","Vanillite","Vanillish","Vanilluxe","Deerling","Sawsbuck","Emolga","Karrablast","Escavalier","Foongus","Amoonguss","Frillish","Jellicent","Alomomola","Joltik","Galvantula","Ferroseed","Ferrothorn","Klink","Klang","Klinklang","Tynamo","Eelektrik","Eelektross","Elgyem","Beheeyem","Litwick","Lampent","Chandelure","Axew","Fraxure","Haxorus","Cubchoo","Beartic","Cryogonal","Shelmet","Accelgor","Stunfisk","Mienfoo","Mienshao","Druddigon","Golett","Golurk","Pawniard","Bisharp","Bouffalant","Rufflet","Braviary","Vullaby","Mandibuzz","Heatmor","Durant","Deino","Zweilous","Hydreigon","Larvesta","Volcarona","Cobalion","Terrakion","Virizion","Tornadus","Thundurus","Reshiram","Zekrom","Landorus","Kyurem","Keldeo","Meloetta","Genesect"] },
+  { id: "Kalos", gridId: "gridKalos", headerId: "headerKalos", start: 650, names: ["Chespin","Quilladin","Chesnaught","Fennekin","Braixen","Delphox","Froakie","Frogadier","Greninja","Bunnelby","Diggersby","Fletchling","Fletchinder","Talonflame","Scatterbug","Spewpa","Vivillon","Litleo","Pyroar","Flabébé","Floette","Florges","Skiddo","Gogoat","Pancham","Pangoro","Furfrou","Espurr","Meowstic","Honedge","Doublade","Aegislash","Spritzee","Aromatisse","Swirlix","Slurpuff","Inkay","Malamar","Binacle","Barbaracle","Skrelp","Dragalge","Clauncher","Clawitzer","Helioptile","Heliolisk","Tyrunt","Tyrantrum","Amaura","Aurorus","Sylveon","Hawlucha","Dedenne","Carbink","Goomy","Sliggoo","Goodra","Klefki","Phantump","Trevenant","Pumpkaboo","Gourgeist","Bergmite","Avalugg","Noibat","Noivern","Xerneas","Yveltal","Zygarde","Diancie","Hoopa","Volcanion"] },
+  { id: "Alola", gridId: "gridAlola", headerId: "headerAlola", start: 722, names: ["Rowlet","Dartrix","Decidueye","Litten","Torracat","Incineroar","Popplio","Brionne","Primarina","Pikipek","Trumbeak","Toucannon","Yungoos","Gumshoos","Grubbin","Charjabug","Vikavolt","Crabrawler","Crabominable","Oricorio","Cutiefly","Ribombee","Rockruff","Lycanroc","Wishiwashi","Mareanie","Toxapex","Mudbray","Mudsdale","Dewpider","Araquanid","Fomantis","Lurantis","Morelull","Shiinotic","Salandit","Salazzle","Stufful","Bewear","Bounsweet","Steenee","Tsareena","Comfey","Oranguru","Passimian","Wimpod","Golisopod","Sandygast","Palossand","Pyukumuku","Type: Null","Silvally","Minior","Komala","Turtonator","Togedemaru","Mimikyu","Bruxish","Drampa","Dhelmise","Jangmo-o","Hakamo-o","Kommo-o","Tapu Koko","Tapu Lele","Tapu Bulu","Tapu Fini","Cosmog","Cosmoem","Solgaleo","Lunala","Nihilego","Buzzwole","Pheromosa","Xurkitree","Celesteela","Kartana","Guzzlord","Necrozma","Magearna","Marshadow","Poipole","Naganadel","Stakataka","Blacephalon","Zeraora","Meltan","Melmetal"] },
+  { id: "Galar", gridId: "gridGalar", headerId: "headerGalar", start: 810, names: ["Grookey","Thackey","Rillaboom","Scorbunny","Raboot","Cinderace","Sobble","Drizzile","Inteleon","Skwovet","Greedent","Rookidee","Corvisquire","Corviknight","Blipbug","Dottler","Orbeetle","Nickit","Thievul","Gossifleur","Eldegoss","Wooloo","Dubwool","Chewtle","Drednaw","Yamper","Boltund","Rolycoly","Carkol","Coalossal","Applin","Flapple","Appletun","Silicobra","Sandaconda","Cramorant","Arrokuda","Barraskewda","Toxel","Toxtricity","Sizzlipede","Centiskorch","Clobbopus","Grapploct","Sinistea","Polteageist","Hatenna","Hattrem","Hatterene","Impidimp","Morgrem","Grimmsnarl","Obstagoon","Perrserker","Cursola","Sirfetch'd","Mr. Rime","Runerigus","Milcery","Alcremie","Falinks","Pincurchin","Snom","Frosmoth","Stonjourner","Eiscue","Indeedee","Morpeko","Cufant","Copperajah","Dracozolt","Arctozolt","Dracovish","Arctovish","Duraludon","Dreepy","Drakloak","Dragapult","Zacian","Zamazenta","Eternatus","Kubfu","Urshifu","Zarude","Regieleki","Regidrago","Glastrier","Spectrier","Calyrex","Wyrdeer","Kleavor","Ursaluna","Basculegion","Sneasler","Overqwil","Enamorus"] },
+  { id: "Paldea", gridId: "gridPaldea", headerId: "headerPaldea", start: 906, names: ["Sprigatito","Floragato","Meowscarada","Fuecoco","Crocalor","Skeledirge","Quaxly","Quaxwell","Quaquaval","Lechonk","Oinkologne","Tarountula","Spidops","Nymble","Lokix","Pawmi","Pawmo","Pawmot","Tandemaus","Maushold","Fidough","Dachsbun","Smoliv","Dolliv","Arboliva","Squawkabilly","Nacli","Naclstack","Garganacl","Charcadet","Armarouge","Ceruledge","Tadbulb","Bellibolt","Wattrel","Kilowattrel","Maschiff","Mabosstiff","Shroodle","Grafaiai","Bramblin","Brambleghast","Toedscool","Toedscruel","Klawf","Capsakid","Scovillain","Rellor","Rabsca","Flittle","Espathra","Tinkatink","Tinkatuff","Tinkaton","Wiglett","Wugtrio","Bombirdier","Finizen","Palafin","Varoom","Revavroom","Cyclizar","Orthworm","Glimmet","Glimmora","Greavard","Houndstone","Flamigo","Cetoddle","Cetitan","Veluza","Dondozo","Tatsugiri","Annihilape","Clodsire","Farigiraf","Dudunsparce","Kingambit","Great Tusk","Scream Tail","Brute Bonnet","Flutter Mane","Slither Wing","Sandy Shocks","Iron Treads","Iron Bundle","Iron Hands","Iron Jugulis","Iron Moth","Iron Valiant","Frigibax","Arctibax","Baxcalibur","Gimmighoul","Gholdengo","Wo-Chien","Chien-Pao","Ting-Lu","Chi-Yu","Roaring Moon","Iron Valiant","Koraidon","Miraidon","Walking Wake","Iron Leaves","Dipplin","Poltchageist","Sinistcha","Okidogi","Munkidori","Fezandipiti","Ogerpon","Archaludon","Hydrapple","Gouging Fire","Raging Bolt","Iron Boulder","Iron Crown","Terapagos","Pecharunt"] }
 ];
 
-// Lista plana de todos los Pokémon (para navegación del modal)
 const ALL_POKEMON = [];
 REGIONS.forEach(r => r.names.forEach((name, i) => {
   ALL_POKEMON.push({ name, num: r.start + i });
 }));
 
-const CARDS_DIR   = "cartas/";
-const SPRITE_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
+// Elementos del DOM
+const searchInput = document.getElementById("searchInput");
+const countBadge = document.getElementById("countBadge");
+const noResults = document.getElementById("noResults");
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modalImg");
+const modalTitle = document.getElementById("modalTitle");
+const modalNum = document.getElementById("modalNum");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const upBtn = document.getElementById("upBtn");
+const downBtn = document.getElementById("downBtn");
 
-// ── CONSTRUIR GRIDS ───────────────────────────────────────────────────
-function tryLoad(path) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload  = () => resolve(path);
-    img.onerror = () => resolve(null);
-    img.src = path;
-  });
+let currentIdx = 0;
+let currentVariantIdx = 0;
+let currentCards = [];
+
+// ── LÓGICA DE CARGA ───────────────────────────────────────────────────
+
+async function initPokedex() {
+  try {
+    // 1. Cargar el JSON de completados
+    const response = await fetch('completados.json');
+    const completados = await response.json(); // Array de números [1, 4, 18...]
+
+    // 2. Crear las cards
+    let globalIndex = 0;
+    REGIONS.forEach(region => {
+      const grid = document.getElementById(region.gridId);
+      
+      region.names.forEach((name, i) => {
+        const num = region.start + i;
+        const numStr = String(num).padStart(3, "0");
+        const gIdx = globalIndex++;
+
+        const card = document.createElement("div");
+        card.className = "poke-card no-art";
+        card.dataset.num = num;
+        card.dataset.name = name.toLowerCase();
+        card.dataset.gindex = gIdx;
+        card.style.animationDelay = `${Math.min(i * 5, 300)}ms`;
+
+        card.innerHTML = `
+          <span class="poke-num">#${numStr}</span>
+          <img class="poke-sprite" src="${SPRITE_BASE}${num}.png" alt="${name}" loading="lazy">
+          <span class="poke-name">${name}</span>
+          <span class="star-badge">★</span>
+        `;
+
+        // Si el número está en el JSON de completados
+        if (completados.includes(num)) {
+          card.classList.remove("no-art");
+          card.classList.add("has-art");
+          
+          // Preparamos las rutas (asumiendo que sigues tu patrón de nombre)
+          // Nota: Aquí podrías añadir lógica para detectar variantes si el JSON fuera más complejo
+          const basePath = `${CARDS_DIR}${numStr} - ${name}`;
+          card.dataset.cards = JSON.stringify([`${basePath}.png`, `${basePath}.jpg`]); 
+          
+          card.addEventListener("click", () => openModal(gIdx));
+        }
+
+        grid.appendChild(card);
+      });
+    });
+
+    updateCount();
+
+  } catch (error) {
+    console.error("Error cargando completados.json:", error);
+  }
 }
 
-let globalIndex = 0; // índice global para el modal
+// ── FUNCIONES AUXILIARES ──────────────────────────────────────────────
 
-REGIONS.forEach(region => {
-  const grid = document.getElementById(region.gridId);
+function updateCount() {
+  const visible = document.querySelectorAll(".poke-card:not(.hidden)").length;
+  countBadge.textContent = `${visible} Pokémon`;
+}
 
-  region.names.forEach((name, i) => {
-    const num    = region.start + i;
-    const numStr = String(num).padStart(3, "0");
-    const gIdx   = globalIndex++;
-
-    const card = document.createElement("div");
-    card.className = "poke-card no-art";
-    card.dataset.num    = num;
-    card.dataset.name   = name.toLowerCase();
-    card.dataset.gindex = gIdx;
-    card.style.animationDelay = `${Math.min(i * 8, 400)}ms`;
-
-    card.innerHTML = `
-      <span class="poke-num">#${numStr}</span>
-      <img class="poke-sprite" src="${SPRITE_BASE}${num}.png" alt="${name}" loading="lazy">
-      <span class="poke-name">${name}</span>
-      <span class="star-badge">★</span>
-    `;
-
-    (async () => {
-      const basePath = CARDS_DIR + numStr + " - " + name;
-      const variants = [];
-
-      // 1. Intenta cargar la imagen principal (.png o .jpg)
-      let mainUrl = await tryLoad(basePath + ".png") || await tryLoad(basePath + ".jpg");
-      if (mainUrl) variants.push(mainUrl);
-
-      // 2. Bucle para buscar variantes con guion bajo (_1, _2, _3...)
-      for (let v = 1; v <= 5; v++) {
-        const vPath = `${basePath}_${v}`;
-        const vUrl = await tryLoad(vPath + ".png") || await tryLoad(vPath + ".jpg");
-        if (vUrl) variants.push(vUrl);
-        else break; // Si no encuentra la siguiente, para de buscar
-      }
-
-      if (variants.length > 0) {
-        card.classList.remove("no-art");
-        card.classList.add("has-art");
-        // Guardamos todas las rutas encontradas como un texto JSON
-        card.dataset.cards = JSON.stringify(variants); 
-        card.addEventListener("click", () => openModal(gIdx));
-        
-        // Si hay más de una, muestra el número junto a la estrella
-        if (variants.length > 1) {
-          card.querySelector('.star-badge').textContent = `★${variants.length}`;
-        }
-      }
-    })();
-
-    grid.appendChild(card);
-  });
-});
-
-
-// ── BÚSQUEDA ──────────────────────────────────────────────────────────
-const searchInput = document.getElementById("searchInput");
-const countBadge  = document.getElementById("countBadge");
-const noResults   = document.getElementById("noResults");
-
+// Búsqueda
 searchInput.addEventListener("input", () => {
   const q = searchInput.value.toLowerCase().trim();
-  let visible = 0;
-
   document.querySelectorAll(".poke-card").forEach(card => {
-    const match = !q ||
-      card.dataset.name.includes(q) ||
-      String(card.dataset.num).padStart(3,"0").includes(q) ||
-      String(card.dataset.num).includes(q);
+    const match = !q || card.dataset.name.includes(q) || card.dataset.num.includes(q);
     card.classList.toggle("hidden", !match);
-    if (match) visible++;
   });
 
-  // Ocultar encabezados de región si no hay resultados visibles en esa región
   REGIONS.forEach(r => {
-    const grid   = document.getElementById(r.gridId);
+    const grid = document.getElementById(r.gridId);
     const header = document.getElementById(r.headerId);
     const anyVisible = [...grid.querySelectorAll(".poke-card")].some(c => !c.classList.contains("hidden"));
     header.style.display = anyVisible ? "" : "none";
     grid.closest(".grid-wrap").style.display = anyVisible ? "" : "none";
   });
 
-  countBadge.textContent = `${visible} Pokémon`;
-  noResults.style.display = visible === 0 ? "block" : "none";
+  updateCount();
 });
 
-// ── MODAL ─────────────────────────────────────────────────────────────
-const modal      = document.getElementById("modal");
-const modalImg   = document.getElementById("modalImg");
-const modalTitle = document.getElementById("modalTitle");
-const modalNum   = document.getElementById("modalNum");
-const prevBtn    = document.getElementById("prevBtn");
-const nextBtn    = document.getElementById("nextBtn");
-const upBtn      = document.getElementById("upBtn");  
-const downBtn    = document.getElementById("downBtn");
-
-let currentIdx = 0;
-let currentVariantIdx = 0;
-let currentCards = [];
-
+// Modal
 function openModal(gIdx) {
   currentIdx = gIdx;
-  currentVariantIdx = 0; // Resetear siempre a la primera ilustración
-  
+  currentVariantIdx = 0;
   const cardEl = document.querySelector(`.poke-card[data-gindex="${gIdx}"]`);
-  // Convertimos el texto JSON de nuevo en un array de rutas
-  currentCards = JSON.parse(cardEl.dataset.cards || "[]");
-  
+  if (!cardEl || cardEl.classList.contains('no-art')) return;
+
+  // Intentamos cargar la imagen (puedes ajustar esto si sabes si es .png o .jpg)
+  const numStr = String(ALL_POKEMON[gIdx].num).padStart(3, "0");
+  const name = ALL_POKEMON[gIdx].name;
+  currentCards = [`${CARDS_DIR}${numStr} - ${name}.png`]; // Simplificado para optimizar
+
   updateModalContent();
   modal.classList.add("open");
   document.body.style.overflow = "hidden";
@@ -766,19 +607,19 @@ function openModal(gIdx) {
 
 function updateModalContent() {
   const { name, num } = ALL_POKEMON[currentIdx];
-  const numStr = String(num).padStart(3, "0");
-  
-  modalNum.textContent = `#${numStr}`;
+  modalNum.textContent = `#${String(num).padStart(3, "0")}`;
   modalTitle.textContent = name;
   modalImg.src = currentCards[currentVariantIdx];
-  modalImg.alt = name;
+  
+  // Si la imagen falla (ej. era .jpg y pusimos .png), intenta cargar .jpg
+  modalImg.onerror = function() {
+    if (this.src.endsWith('.png')) {
+      this.src = this.src.replace('.png', '.jpg');
+    }
+  };
 
   prevBtn.disabled = currentIdx === 0;
   nextBtn.disabled = currentIdx === ALL_POKEMON.length - 1;
-
-  // Habilitar/Deshabilitar botones de variantes
-  upBtn.disabled = currentVariantIdx === 0;
-  downBtn.disabled = currentVariantIdx === currentCards.length - 1;
 }
 
 function closeModal() {
@@ -786,37 +627,23 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
+// Eventos de botones
 document.getElementById("modalClose").addEventListener("click", closeModal);
 document.getElementById("modalBackdrop").addEventListener("click", closeModal);
-prevBtn.addEventListener("click", () => { if (currentIdx > 0) openModal(currentIdx - 1); });
-nextBtn.addEventListener("click", () => { if (currentIdx < ALL_POKEMON.length - 1) openModal(currentIdx + 1); });
-
-upBtn.addEventListener("click", () => {
-  if (currentVariantIdx > 0) {
-    currentVariantIdx--;
-    updateModalContent();
-  }
+prevBtn.addEventListener("click", () => { 
+  let nextId = currentIdx - 1;
+  while(nextId >= 0 && document.querySelector(`.poke-card[data-gindex="${nextId}"]`).classList.contains('no-art')) nextId--;
+  if(nextId >= 0) openModal(nextId);
+});
+nextBtn.addEventListener("click", () => { 
+  let nextId = currentIdx + 1;
+  while(nextId < ALL_POKEMON.length && document.querySelector(`.poke-card[data-gindex="${nextId}"]`).classList.contains('no-art')) nextId++;
+  if(nextId < ALL_POKEMON.length) openModal(nextId);
 });
 
-downBtn.addEventListener("click", () => {
-  if (currentVariantIdx < currentCards.length - 1) {
-    currentVariantIdx++;
-    updateModalContent();
-  }
-});
-
-// Teclado
-document.addEventListener("keydown", e => {
-  if (!modal.classList.contains("open")) return;
-  if (e.key === "Escape")     closeModal();
-  if (e.key === "ArrowLeft")  prevBtn.click();
-  if (e.key === "ArrowRight") nextBtn.click();
-  if (e.key === "ArrowUp")    upBtn.click();
-  if (e.key === "ArrowDown")  downBtn.click();
-});
-
-// Corregir contador inicial
-countBadge.textContent = `${document.querySelectorAll(".poke-card").length} Pokémon`;
+// Iniciar
+initPokedex();
+</script>
 </script>
 </body>
 </html>
