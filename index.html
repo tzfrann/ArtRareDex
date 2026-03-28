@@ -314,6 +314,50 @@
   }
   footer strong { color:var(--gold); }
 
+/* ── FILTRO Y BARRA DE PROGRESO ── */
+.filter-completed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.filter-completed input { display: none; }
+.filter-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 9px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+.filter-completed input:checked + .filter-label {
+  color: var(--gold3);
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.15);
+  box-shadow: 0 0 15px rgba(201,168,76,0.1);
+}
+
+.progress-container {
+  max-width: 1380px;
+  margin: 0 auto 30px;
+  height: 4px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+}
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold), var(--gold3));
+  box-shadow: 0 0 10px var(--gold);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+  
   /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width:5px; }
   ::-webkit-scrollbar-track { background:var(--bg); }
@@ -337,7 +381,17 @@
     </svg>
     <input type="text" id="searchInput" placeholder="Search by name or number…">
   </div>
-  <div class="badge" id="countBadge">1025 Pokémon</div>
+  
+  <label class="filter-completed">
+    <input type="checkbox" id="filterDone">
+    <span class="filter-label">Only Finished Designs</span>
+  </label>
+
+  <div class="badge" id="countBadge">0 / 1025 Pokémon</div>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
 </div>
 
 <div class="region-header" id="headerKanto">
@@ -467,11 +521,11 @@
 </footer>
 
 <script>
-// ── CONFIGURACIÓN Y DATOS ──────────────────────────────────────────────
+// ── CONFIGURACIÓN Y RUTAS ─────────────────────────────────────────────
 const CARDS_DIR = "cartas/";
 const SPRITE_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
 
-// Estructura de regiones (mantenemos la que ya tenías)
+// ── BASE DE DATOS DE REGIONES (Mantenemos tu lista original) ──────────
 const REGIONS = [
   { id: "Kanto", gridId: "gridKanto", headerId: "headerKanto", start: 1, names: ["Bulbasaur","Ivysaur","Venusaur","Charmander","Charmeleon","Charizard","Squirtle","Wartortle","Blastoise","Caterpie","Metapod","Butterfree","Weedle","Kakuna","Beedrill","Pidgey","Pidgeotto","Pidgeot","Rattata","Raticate","Spearow","Fearow","Ekans","Arbok","Pikachu","Raichu","Sandshrew","Sandslash","Nidoran♀","Nidorina","Nidoqueen","Nidoran♂","Nidorino","Nidoking","Clefairy","Clefable","Vulpix","Ninetales","Jigglypuff","Wigglytuff","Zubat","Golbat","Oddish","Gloom","Vileplume","Paras","Parasect","Venonat","Venomoth","Diglett","Dugtrio","Meowth","Persian","Psyduck","Golduck","Mankey","Primeape","Growlithe","Arcanine","Poliwag","Poliwhirl","Poliwrath","Abra","Kadabra","Alakazam","Machop","Machoke","Machamp","Bellsprout","Weepinbell","Victreebel","Tentacool","Tentacruel","Geodude","Graveler","Golem","Ponyta","Rapidash","Slowpoke","Slowbro","Magnemite","Magneton","Farfetch'd","Doduo","Dodrio","Seel","Dewgong","Grimer","Muk","Shellder","Cloyster","Gastly","Haunter","Gengar","Onix","Drowzee","Hypno","Krabby","Kingler","Voltorb","Electrode","Exeggcute","Exeggutor","Cubone","Marowak","Hitmonlee","Hitmonchan","Lickitung","Koffing","Weezing","Rhyhorn","Rhydon","Chansey","Tangela","Kangaskhan","Horsea","Seadra","Goldeen","Seaking","Staryu","Starmie","Mr. Mime","Scyther","Jynx","Electabuzz","Magmar","Pinsir","Tauros","Magikarp","Gyarados","Lapras","Ditto","Eevee","Vaporeon","Jolteon","Flareon","Porygon","Omanyte","Omastar","Kabuto","Kabutops","Aerodactyl","Snorlax","Articuno","Zapdos","Moltres","Dratini","Dragonair","Dragonite","Mewtwo","Mew"] },
   { id: "Johto", gridId: "gridJohto", headerId: "headerJohto", start: 152, names: ["Chikorita","Bayleef","Meganium","Cyndaquil","Quilava","Typhlosion","Totodile","Croconaw","Feraligatr","Sentret","Furret","Hoothoot","Noctowl","Ledyba","Ledian","Spinarak","Ariados","Crobat","Chinchou","Lanturn","Pichu","Cleffa","Igglybuff","Togepi","Togetic","Natu","Xatu","Mareep","Flaaffy","Ampharos","Bellossom","Marill","Azumarill","Sudowoodo","Politoed","Hoppip","Skiploom","Jumpluff","Aipom","Sunkern","Sunflora","Yanma","Wooper","Quagsire","Espeon","Umbreon","Murkrow","Slowking","Misdreavus","Unown","Wobbuffet","Girafarig","Pineco","Forretress","Dunsparce","Gligar","Steelix","Snubbull","Granbull","Qwilfish","Scizor","Shuckle","Heracross","Sneasel","Teddiursa","Ursaring","Slugma","Magcargo","Swinub","Piloswine","Corsola","Remoraid","Octillery","Delibird","Mantine","Skarmory","Houndour","Houndoom","Kingdra","Phanpy","Donphan","Porygon2","Stantler","Smeargle","Tyrogue","Hitmontop","Smoochum","Elekid","Magby","Miltank","Blissey","Raikou","Entei","Suicune","Larvitar","Pupitar","Tyranitar","Lugia","Ho-oh","Celebi"] },
@@ -484,15 +538,16 @@ const REGIONS = [
   { id: "Paldea", gridId: "gridPaldea", headerId: "headerPaldea", start: 906, names: ["Sprigatito","Floragato","Meowscarada","Fuecoco","Crocalor","Skeledirge","Quaxly","Quaxwell","Quaquaval","Lechonk","Oinkologne","Tarountula","Spidops","Nymble","Lokix","Pawmi","Pawmo","Pawmot","Tandemaus","Maushold","Fidough","Dachsbun","Smoliv","Dolliv","Arboliva","Squawkabilly","Nacli","Naclstack","Garganacl","Charcadet","Armarouge","Ceruledge","Tadbulb","Bellibolt","Wattrel","Kilowattrel","Maschiff","Mabosstiff","Shroodle","Grafaiai","Bramblin","Brambleghast","Toedscool","Toedscruel","Klawf","Capsakid","Scovillain","Rellor","Rabsca","Flittle","Espathra","Tinkatink","Tinkatuff","Tinkaton","Wiglett","Wugtrio","Bombirdier","Finizen","Palafin","Varoom","Revavroom","Cyclizar","Orthworm","Glimmet","Glimmora","Greavard","Houndstone","Flamigo","Cetoddle","Cetitan","Veluza","Dondozo","Tatsugiri","Annihilape","Clodsire","Farigiraf","Dudunsparce","Kingambit","Great Tusk","Scream Tail","Brute Bonnet","Flutter Mane","Slither Wing","Sandy Shocks","Iron Treads","Iron Bundle","Iron Hands","Iron Jugulis","Iron Moth","Iron Valiant","Frigibax","Arctibax","Baxcalibur","Gimmighoul","Gholdengo","Wo-Chien","Chien-Pao","Ting-Lu","Chi-Yu","Roaring Moon","Iron Valiant","Koraidon","Miraidon","Walking Wake","Iron Leaves","Dipplin","Poltchageist","Sinistcha","Okidogi","Munkidori","Fezandipiti","Ogerpon","Archaludon","Hydrapple","Gouging Fire","Raging Bolt","Iron Boulder","Iron Crown","Terapagos","Pecharunt"] }
 ];
 
+// ── VARIABLES GLOBALES ────────────────────────────────────────────────
 const ALL_POKEMON = [];
 REGIONS.forEach(r => r.names.forEach((name, i) => {
   ALL_POKEMON.push({ name, num: r.start + i });
 }));
 
-// Elementos del DOM
 const searchInput = document.getElementById("searchInput");
+const filterDone = document.getElementById("filterDone");
 const countBadge = document.getElementById("countBadge");
-const noResults = document.getElementById("noResults");
+const progressBar = document.getElementById("progressBar");
 const modal = document.getElementById("modal");
 const modalImg = document.getElementById("modalImg");
 const modalTitle = document.getElementById("modalTitle");
@@ -503,123 +558,123 @@ const upBtn = document.getElementById("upBtn");
 const downBtn = document.getElementById("downBtn");
 
 let currentIdx = 0;
-let currentVariantIdx = 0;
-let currentCards = [];
+let totalFinished = 0;
 
-// ── LÓGICA DE CARGA ───────────────────────────────────────────────────
-
+// ── INICIO DE LA APP ──────────────────────────────────────────────────
 async function initPokedex() {
   try {
-    // 1. Cargar el JSON de completados
     const response = await fetch('completados.json');
-    const completados = await response.json(); // Array de números [1, 4, 18...]
+    if (!response.ok) throw new Error("JSON no encontrado");
+    const completados = await response.json();
+    totalFinished = completados.length;
 
-    // 2. Crear las cards
+    // Actualizar barra de progreso (1025 es el total)
+    const percent = (totalFinished / 1025) * 100;
+    progressBar.style.width = `${percent}%`;
+
     let globalIndex = 0;
     REGIONS.forEach(region => {
       const grid = document.getElementById(region.gridId);
-      
       region.names.forEach((name, i) => {
         const num = region.start + i;
-        const numStr = String(num).padStart(3, "0");
         const gIdx = globalIndex++;
-
-        const card = document.createElement("div");
-        card.className = "poke-card no-art";
-        card.dataset.num = num;
-        card.dataset.name = name.toLowerCase();
-        card.dataset.gindex = gIdx;
-        card.style.animationDelay = `${Math.min(i * 5, 300)}ms`;
-
-        card.innerHTML = `
-          <span class="poke-num">#${numStr}</span>
-          <img class="poke-sprite" src="${SPRITE_BASE}${num}.png" alt="${name}" loading="lazy">
-          <span class="poke-name">${name}</span>
-          <span class="star-badge">★</span>
-        `;
-
-        // Si el número está en el JSON de completados
-        if (completados.includes(num)) {
-          card.classList.remove("no-art");
-          card.classList.add("has-art");
-          
-          // Preparamos las rutas (asumiendo que sigues tu patrón de nombre)
-          // Nota: Aquí podrías añadir lógica para detectar variantes si el JSON fuera más complejo
-          const basePath = `${CARDS_DIR}${numStr} - ${name}`;
-          card.dataset.cards = JSON.stringify([`${basePath}.png`, `${basePath}.jpg`]); 
-          
-          card.addEventListener("click", () => openModal(gIdx));
-        }
-
+        const hasArt = completados.includes(num);
+        
+        const card = createCard(name, num, gIdx, hasArt);
         grid.appendChild(card);
       });
     });
 
-    updateCount();
-
-  } catch (error) {
-    console.error("Error cargando completados.json:", error);
+    updateInterface();
+  } catch (e) {
+    console.error("Error cargando la Pokedex:", e);
+    alert("Error: Asegúrate de tener el archivo completados.json en la carpeta.");
   }
 }
 
-// ── FUNCIONES AUXILIARES ──────────────────────────────────────────────
+// ── CREACIÓN DE CARTAS ───────────────────────────────────────────────
+function createCard(name, num, gIdx, hasArt) {
+  const numStr = String(num).padStart(3, "0");
+  const card = document.createElement("div");
+  card.className = `poke-card ${hasArt ? 'has-art' : 'no-art'}`;
+  card.dataset.num = num;
+  card.dataset.name = name.toLowerCase();
+  card.dataset.gindex = gIdx;
+  card.dataset.finished = hasArt;
 
-function updateCount() {
-  const visible = document.querySelectorAll(".poke-card:not(.hidden)").length;
-  countBadge.textContent = `${visible} Pokémon`;
+  card.innerHTML = `
+    <span class="poke-num">#${numStr}</span>
+    <img class="poke-sprite" src="${SPRITE_BASE}${num}.png" alt="${name}" loading="lazy">
+    <span class="poke-name">${name}</span>
+    <span class="star-badge">★</span>
+  `;
+
+  if (hasArt) {
+    const path = `${CARDS_DIR}${numStr} - ${name}`;
+    card.dataset.cards = JSON.stringify([`${path}.png`, `${path}.jpg`]);
+    card.addEventListener("click", () => openModal(gIdx));
+  }
+  return card;
 }
 
-// Búsqueda
-searchInput.addEventListener("input", () => {
-  const q = searchInput.value.toLowerCase().trim();
+// ── FILTROS Y BÚSQUEDA ───────────────────────────────────────────────
+function updateInterface() {
+  const query = searchInput.value.toLowerCase().trim();
+  const onlyFinished = filterDone.checked;
+
   document.querySelectorAll(".poke-card").forEach(card => {
-    const match = !q || card.dataset.name.includes(q) || card.dataset.num.includes(q);
-    card.classList.toggle("hidden", !match);
+    const matchesSearch = !query || card.dataset.name.includes(query) || card.dataset.num.includes(query);
+    const matchesFilter = !onlyFinished || card.dataset.finished === "true";
+    card.classList.toggle("hidden", !(matchesSearch && matchesFilter));
   });
 
+  // Esconder títulos de regiones vacías
   REGIONS.forEach(r => {
     const grid = document.getElementById(r.gridId);
     const header = document.getElementById(r.headerId);
-    const anyVisible = [...grid.querySelectorAll(".poke-card")].some(c => !c.classList.contains("hidden"));
-    header.style.display = anyVisible ? "" : "none";
-    grid.closest(".grid-wrap").style.display = anyVisible ? "" : "none";
+    const hasVisible = [...grid.querySelectorAll(".poke-card")].some(c => !c.classList.contains("hidden"));
+    header.style.display = hasVisible ? "" : "none";
+    grid.parentElement.style.display = hasVisible ? "" : "none";
   });
 
-  updateCount();
-});
+  countBadge.textContent = `${totalFinished} / 1025 Designed`;
+}
 
-// Modal
+// ── LÓGICA DEL MODAL ─────────────────────────────────────────────────
 function openModal(gIdx) {
   currentIdx = gIdx;
-  currentVariantIdx = 0;
   const cardEl = document.querySelector(`.poke-card[data-gindex="${gIdx}"]`);
   if (!cardEl || cardEl.classList.contains('no-art')) return;
 
-  // Intentamos cargar la imagen (puedes ajustar esto si sabes si es .png o .jpg)
-  const numStr = String(ALL_POKEMON[gIdx].num).padStart(3, "0");
-  const name = ALL_POKEMON[gIdx].name;
-  currentCards = [`${CARDS_DIR}${numStr} - ${name}.png`]; // Simplificado para optimizar
-
-  updateModalContent();
-  modal.classList.add("open");
-  document.body.style.overflow = "hidden";
-}
-
-function updateModalContent() {
-  const { name, num } = ALL_POKEMON[currentIdx];
-  modalNum.textContent = `#${String(num).padStart(3, "0")}`;
-  modalTitle.textContent = name;
-  modalImg.src = currentCards[currentVariantIdx];
+  const { name, num } = ALL_POKEMON[gIdx];
+  const numStr = String(num).padStart(3, "0");
   
-  // Si la imagen falla (ej. era .jpg y pusimos .png), intenta cargar .jpg
+  modalNum.textContent = `#${numStr}`;
+  modalTitle.textContent = name;
+  
+  // Lógica de carga de imagen (Prueba PNG, si falla JPG)
+  const imgPath = `${CARDS_DIR}${numStr} - ${name}`;
+  modalImg.src = `${imgPath}.png`;
   modalImg.onerror = function() {
-    if (this.src.endsWith('.png')) {
-      this.src = this.src.replace('.png', '.jpg');
-    }
+    if (this.src.endsWith('.png')) this.src = `${imgPath}.jpg`;
   };
 
-  prevBtn.disabled = currentIdx === 0;
-  nextBtn.disabled = currentIdx === ALL_POKEMON.length - 1;
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+  
+  // Activar/desactivar botones de navegación
+  prevBtn.disabled = !findNextFinished(gIdx, -1);
+  nextBtn.disabled = !findNextFinished(gIdx, 1);
+}
+
+function findNextFinished(startIdx, direction) {
+  let i = startIdx + direction;
+  while (i >= 0 && i < ALL_POKEMON.length) {
+    const card = document.querySelector(`.poke-card[data-gindex="${i}"]`);
+    if (card && card.dataset.finished === "true") return i;
+    i += direction;
+  }
+  return null;
 }
 
 function closeModal() {
@@ -627,23 +682,32 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-// Eventos de botones
+// ── EVENTOS ──────────────────────────────────────────────────────────
+searchInput.addEventListener("input", updateInterface);
+filterDone.addEventListener("change", updateInterface);
 document.getElementById("modalClose").addEventListener("click", closeModal);
 document.getElementById("modalBackdrop").addEventListener("click", closeModal);
-prevBtn.addEventListener("click", () => { 
-  let nextId = currentIdx - 1;
-  while(nextId >= 0 && document.querySelector(`.poke-card[data-gindex="${nextId}"]`).classList.contains('no-art')) nextId--;
-  if(nextId >= 0) openModal(nextId);
-});
-nextBtn.addEventListener("click", () => { 
-  let nextId = currentIdx + 1;
-  while(nextId < ALL_POKEMON.length && document.querySelector(`.poke-card[data-gindex="${nextId}"]`).classList.contains('no-art')) nextId++;
-  if(nextId < ALL_POKEMON.length) openModal(nextId);
+
+prevBtn.addEventListener("click", () => {
+  const prev = findNextFinished(currentIdx, -1);
+  if (prev !== null) openModal(prev);
 });
 
-// Iniciar
+nextBtn.addEventListener("click", () => {
+  const next = findNextFinished(currentIdx, 1);
+  if (next !== null) openModal(next);
+});
+
+// Teclado
+document.addEventListener("keydown", e => {
+  if (!modal.classList.contains("open")) return;
+  if (e.key === "Escape") closeModal();
+  if (e.key === "ArrowLeft") prevBtn.click();
+  if (e.key === "ArrowRight") nextBtn.click();
+});
+
+// Arrancar
 initPokedex();
-</script>
 </script>
 </body>
 </html>
