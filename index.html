@@ -720,35 +720,7 @@ REGIONS.forEach(region => {
       <span class="star-badge">★</span>
     `;
 
-    (async () => {
-      const basePath = CARDS_DIR + numStr + " - " + name;
-      const variants = [];
-
-      // 1. Intenta cargar la imagen principal (.png o .jpg)
-      let mainUrl = await tryLoad(basePath + ".png") || await tryLoad(basePath + ".jpg");
-      if (mainUrl) variants.push(mainUrl);
-
-      // 2. Bucle para buscar variantes con guion bajo (_1, _2, _3...)
-      for (let v = 1; v <= 5; v++) {
-        const vPath = `${basePath}_${v}`;
-        const vUrl = await tryLoad(vPath + ".png") || await tryLoad(vPath + ".jpg");
-        if (vUrl) variants.push(vUrl);
-        else break; // Si no encuentra la siguiente, para de buscar
-      }
-
-      if (variants.length > 0) {
-        card.classList.remove("no-art");
-        card.classList.add("has-art");
-        // Guardamos todas las rutas encontradas como un texto JSON
-        card.dataset.cards = JSON.stringify(variants); 
-        card.addEventListener("click", () => openModal(gIdx));
-        
-        // Si hay más de una, muestra el número junto a la estrella
-        if (variants.length > 1) {
-          card.querySelector('.star-badge').textContent = `★${variants.length}`;
-        }
-      }
-    })();
+loadCardWithDelay(card, numStr, name, gIdx);
 
     grid.appendChild(card);
   });
