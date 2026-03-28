@@ -849,26 +849,35 @@ document.addEventListener("keydown", e => {
 
 // Corregir contador inicial
 countBadge.textContent = `${document.querySelectorAll(".poke-card").length} Pokémon`;
-  // --- Lógica de Progreso y Galería ---
+// --- Lógica de Progreso y Galería Corregida ---
 const filterBtn = document.getElementById('filterBtn');
 const progressBar = document.getElementById('progressBar');
 const progressText = document.getElementById('progressText');
 let onlyIllustrated = false;
 
-// Función para contar cuántos tienen la clase "has-art"
+// Esta función cuenta cuántas cartas tienen ya la ilustración cargada
 function refreshCounters() {
+  // Buscamos cuántas cartas han pasado la prueba de "has-art"
   const illustrated = document.querySelectorAll('.poke-card.has-art').length;
   const total = 1025;
   const percent = (illustrated / total) * 100;
   
-  progressBar.style.width = percent + "%";
-  progressText.textContent = `${illustrated} / ${total} COMPLETED`;
+  // Actualizamos la barra visual
+  if (progressBar) progressBar.style.width = percent + "%";
+  if (progressText) progressText.textContent = `${illustrated} / ${total} COMPLETED`;
+  
+  // Actualizamos también el badge de texto si existe
+  const countBadge = document.getElementById('countBadge');
+  if (countBadge) countBadge.textContent = `${illustrated} Illustrated Designs`;
 }
 
-// Ejecutamos la cuenta después de 2 segundos (tiempo para que el sistema detecte imágenes)
-setTimeout(refreshCounters, 2500);
+// IMPORTANTE: Como las imágenes tardan en comprobarse, 
+// ejecutamos la cuenta varias veces al principio para asegurar el tiro.
+setTimeout(refreshCounters, 1000); // Al segundo
+setTimeout(refreshCounters, 3000); // A los 3 segundos
+setTimeout(refreshCounters, 5000); // A los 5 segundos (por si la red es lenta)
 
-// Botón para mostrar solo los completados
+// Lógica del botón para mostrar solo los completados
 filterBtn.addEventListener('click', () => {
   onlyIllustrated = !onlyIllustrated;
   filterBtn.classList.toggle('active', onlyIllustrated);
@@ -876,25 +885,33 @@ filterBtn.addEventListener('click', () => {
 
   document.querySelectorAll('.poke-card').forEach(card => {
     if (onlyIllustrated) {
-      // Si el botón está activo, ocultamos los que NO tienen arte
-      card.classList.toggle('hidden', !card.classList.contains('has-art'));
+      // Ocultamos si no tiene arte
+      if (!card.classList.contains('has-art')) {
+        card.classList.add('hidden');
+      }
     } else {
-      // Si no, mostramos todos (respetando si hay algo escrito en el buscador)
-      const q = searchInput.value.toLowerCase().trim();
+      // Al desactivar galería, mostramos todo lo que coincida con el buscador
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
       const match = !q || card.dataset.name.includes(q) || card.dataset.num.includes(q);
       card.classList.toggle('hidden', !match);
     }
   });
 
-  // Re-ajustar las cabeceras de región para que no queden vacías
+  // Función para ocultar secciones vacías (Kanto, Johto, etc.)
+  updateRegionHeaders();
+});
+
+function updateRegionHeaders() {
   REGIONS.forEach(r => {
     const grid = document.getElementById(r.gridId);
     const header = document.getElementById(r.headerId);
-    const anyVisible = [...grid.querySelectorAll(".poke-card")].some(c => !c.classList.contains("hidden"));
-    header.style.display = anyVisible ? "" : "none";
-    grid.closest(".grid-wrap").style.display = anyVisible ? "" : "none";
+    if (grid && header) {
+      const anyVisible = [...grid.querySelectorAll(".poke-card")].some(c => !c.classList.contains("hidden"));
+      header.style.display = anyVisible ? "" : "none";
+      grid.closest(".grid-wrap").style.display = anyVisible ? "" : "none";
+    }
   });
-});
+}
 </script>
 </body>
 </html>
