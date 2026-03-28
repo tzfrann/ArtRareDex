@@ -637,111 +637,74 @@ REGIONS.forEach(r => r.names.forEach((name, i) => {
 const CARDS_DIR   = "cartas/";
 const SPRITE_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
 
-// ── CONSTRUIR GRIDS (OPTIMIZADO CON JSON) ─────────────────────────────
-
-// Esta función es la que arranca todo
-async function iniciarPokedex() {
-  try {
-    // 1. Pedimos la lista de completados (Solo una petición al servidor)
-    const respuesta = await fetch('completados.json');
-    const completados = respuesta.ok ? await respuesta.json() : [];
-    
-    // 2. Dibujamos los grids
-    renderizarTodo(completados);
-    
-  } catch (e) {
-    console.error("Error al cargar completados.json:", e);
-    renderizarTodo([]); // Si falla, carga la web vacía de cartas
-  }
+// ── CONSTRUIR GRIDS ───────────────────────────────────────────────────
+function tryLoad(path) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(path);
+    img.onerror = () => resolve(null);
+    img.src = path;
+  });
 }
 
-function renderizarTodo(completados) {
-  let globalIndex = 0;
+let globalIndex = 0; // índice global para el modal
 
-  REGIONS.forEach(region => {
-    const grid = document.getElementById(region.gridId);
-    if (!grid) return;
+REGIONS.forEach(region => {
+  const grid = document.getElementById(region.gridId);
 
-    region.names.forEach((name, i) => {
-      const num = region.start + i;
-      const numStr = String(num).padStart(3, "0");
-      const gIdx = globalIndex++;
+  region.names.forEach((name, i) => {
+    const num    = region.start + i;
+    const numStr = String(num).padStart(3, "0");
+    const gIdx   = globalIndex++;
 
-      // ¿Está este número en nuestro JSON?
-      const tieneArte = completados.includes(num);
+    const card = document.createElement("div");
+    card.className = "poke-card no-art";
+    card.dataset.num    = num;
+    card.dataset.name   = name.toLowerCase();
+    card.dataset.gindex = gIdx;
+    card.style.animationDelay = `${Math.min(i * 8, 400)}ms`;
 
-      const card = document.createElement("div");
-      card.className = tieneArte ? "poke-card has-art" : "poke-card no-art";
-      card.dataset.num = num;
-      card.dataset.name = name.toLowerCase();
-      card.dataset.gindex = gIdx;
-      card.style.animationDelay = `${Math.min(i * 8, 400)}ms`;
+    card.innerHTML = `
+      <span class="poke-num">#${numStr}</span>
+      <img class="poke-sprite" src="${SPRITE_BASE}${num}.png" alt="${name}" loading="lazy">
+      <span class="poke-name">${name}</span>
+      <span class="star-badge">★</span>
+    `;
 
-      card.innerHTML = `
-        <span class="poke-num">#${numStr}</span>
-        <img class="poke-sprite" src="${SPRITE_BASE}${num}.png" alt="${name}" loading="lazy">
-        <span class="poke-name">${name}</span>
-        <span class="star-badge">★</span>
-      `;
+    (async () => {
+      const basePath = CARDS_DIR + numStr + " - " + name;
+      const variants = [];
 
-      if (tieneArte) {
-        // Si el JSON dice que existe, montamos la ruta directa
-        const path = `${CARDS_DIR}${numStr} - ${name}.png`;
-        card.dataset.cards = JSON.stringify([path]);
-        card.addEventListener("click", () => openModal(gIdx));
+      // 1. Intenta cargar la imagen principal (.png o .jpg)
+      let mainUrl = await tryLoad(basePath + ".png") || await tryLoad(basePath + ".jpg");
+      if (mainUrl) variants.push(mainUrl);
+
+      // 2. Bucle para buscar variantes con guion bajo (_1, _2, _3...)
+      for (let v = 1; v <= 5; v++) {
+        const vPath = `${basePath}_${v}`;
+        const vUrl = await tryLoad(vPath + ".png") || await tryLoad(vPath + ".jpg");
+        if (vUrl) variants.push(vUrl);
+        else break; // Si no encuentra la siguiente, para de buscar
       }
 
-      grid.appendChild(card);
-    });
-  });
-
-  // Actualizar los contadores y barra al terminar
-  actualizarBarra(completados.length);
-}
-
-// Nueva función para la barra de progreso
-function actualizarBarra(cantidad) {
-  const total = 1025;
-  const porcentaje = (cantidad / total) * 100;
-  const bar = document.getElementById('progressBar');
-  const txt = document.getElementById('progressText');
-  const badge = document.getElementById('countBadge');
-
-  if (bar) bar.style.width = porcentaje + "%";
-  if (txt) txt.textContent = `${cantidad} / ${total} COMPLETED`;
-  if (badge) badge.textContent = `${cantidad} Illustrated`;
-}
-
-// Lógica del botón de Galería (Filtro)
-const filterBtn = document.getElementById('filterBtn');
-if (filterBtn) {
-  filterBtn.onclick = function() {
-    const activo = this.classList.toggle('active');
-    this.textContent = activo ? "Show All" : "Show Gallery";
-    
-    document.querySelectorAll('.poke-card').forEach(card => {
-        if (activo) {
-            card.style.display = card.classList.contains('has-art') ? "" : "none";
-        } else {
-            card.style.display = "";
+      if (variants.length > 0) {
+        card.classList.remove("no-art");
+        card.classList.add("has-art");
+        // Guardamos todas las rutas encontradas como un texto JSON
+        card.dataset.cards = JSON.stringify(variants); 
+        card.addEventListener("click", () => openModal(gIdx));
+        
+        // Si hay más de una, muestra el número junto a la estrella
+        if (variants.length > 1) {
+          card.querySelector('.star-badge').textContent = `★${variants.length}`;
         }
-    });
-    // Ocultar cabeceras vacías
-    REGIONS.forEach(r => {
-      const grid = document.getElementById(r.gridId);
-      const header = document.getElementById(r.headerId);
-      const visible = [...grid.querySelectorAll(".poke-card")].some(c => c.style.display !== "none");
-      header.style.display = visible ? "" : "none";
-      grid.closest(".grid-wrap").style.display = visible ? "" : "none";
-    });
-  };
-}
+      }
+    })();
 
-// LANZAR EL MOTOR
-iniciarPokedex();
+    grid.appendChild(card);
+  });
+});
 
-// ── BÚSQUEDA ──────────────────────────────────────────────────────────
-// (Aquí sigue tu código de búsqueda original...)
 
 // ── BÚSQUEDA ──────────────────────────────────────────────────────────
 const searchInput = document.getElementById("searchInput");
