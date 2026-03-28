@@ -1,6 +1,6 @@
-# ✨ ART RARE — Pokédex TCG Project
+# ✨ ART RARE DEX — Pokédex TCG Project
 
-Welcome to **ART RARE**, a premium digital gallery and interactive Pokédex. 
+Welcome to **ART RARE DEX**, a premium digital gallery and interactive Pokédex. 
 
 > "A visual journey to dedicate at least one card to each of the 1,025 Pokémon — yes, even those that aren't loved enough."
 
