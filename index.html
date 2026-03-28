@@ -661,6 +661,22 @@ const REGIONS = [
   }
 ];
 
+async function loadCardWithDelay(card, numStr, name, gIdx) {
+  // Espera 2 milisegundos multiplicado por su posición (el 1000 espera 2 seg)
+  await new Promise(resolve => setTimeout(resolve, gIdx * 2));
+  
+  const basePath = CARDS_DIR + numStr + " - " + name;
+  const mainUrl = await tryLoad(basePath + ".png") || await tryLoad(basePath + ".jpg");
+  
+  if (mainUrl) {
+    card.classList.remove("no-art");
+    card.classList.add("has-art");
+    card.dataset.cards = JSON.stringify([mainUrl]);
+    card.addEventListener("click", () => openModal(gIdx));
+    // Esta es la línea mágica que hace que la barra de progreso se mueva sola
+    refreshProgress(); 
+  }
+}
 // Lista plana de todos los Pokémon (para navegación del modal)
 const ALL_POKEMON = [];
 REGIONS.forEach(r => r.names.forEach((name, i) => {
