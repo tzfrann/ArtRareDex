@@ -20,7 +20,6 @@ Every card in this collection features unique illustrations generated and refine
 Currently, the Pokédex is a living archive that updates as new designs are finished.
 
 - **Status:** 18 / 1,025 Illustrated 
-- **Current Goal:** Completing the first 18 icons of the collection.
 
 ---
 
