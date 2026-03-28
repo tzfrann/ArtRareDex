@@ -97,7 +97,32 @@
     color: var(--gold); background: rgba(201,168,76,.07);
     border: 1px solid var(--border); border-radius: 20px; padding: 9px 18px;
   }
-
+/* NUEVOS ESTILOS: BARRA Y FILTRO */
+  .progress-container {
+    width: 200px; height: 14px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 20px;
+    position: relative; overflow: hidden; display: flex; align-items: center;
+  }
+  .progress-bar {
+    width: 0%; height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold3));
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .progress-text {
+    position: absolute; width: 100%; text-align: center;
+    font-size: 9px; font-family: 'Cinzel', serif; font-weight: 600;
+    color: var(--text); z-index: 2; pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  }
+  .btn-filter { 
+    cursor: pointer; transition: all 0.3s ease; 
+    border: 1px solid var(--gold);
+  }
+  .btn-filter:hover { background: rgba(201,168,76,0.15); }
+  .btn-filter.active { 
+    background: var(--gold); color: #000; 
+    box-shadow: 0 0 15px rgba(201,168,76,0.4);
+  }
   /* ── GRID ── */
   .grid-wrap {
     position: relative; z-index:5;
@@ -337,6 +362,14 @@
     </svg>
     <input type="text" id="searchInput" placeholder="Search by name or number…">
   </div>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+    <span class="progress-text" id="progressText">0 / 1025</span>
+  </div>
+
+  <button class="badge btn-filter" id="filterBtn">Show Gallery</button>
+
   <div class="badge" id="countBadge">1025 Pokémon</div>
 </div>
 
@@ -816,6 +849,52 @@ document.addEventListener("keydown", e => {
 
 // Corregir contador inicial
 countBadge.textContent = `${document.querySelectorAll(".poke-card").length} Pokémon`;
+  // --- Lógica de Progreso y Galería ---
+const filterBtn = document.getElementById('filterBtn');
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+let onlyIllustrated = false;
+
+// Función para contar cuántos tienen la clase "has-art"
+function refreshCounters() {
+  const illustrated = document.querySelectorAll('.poke-card.has-art').length;
+  const total = 1025;
+  const percent = (illustrated / total) * 100;
+  
+  progressBar.style.width = percent + "%";
+  progressText.textContent = `${illustrated} / ${total} COMPLETED`;
+}
+
+// Ejecutamos la cuenta después de 2 segundos (tiempo para que el sistema detecte imágenes)
+setTimeout(refreshCounters, 2500);
+
+// Botón para mostrar solo los completados
+filterBtn.addEventListener('click', () => {
+  onlyIllustrated = !onlyIllustrated;
+  filterBtn.classList.toggle('active', onlyIllustrated);
+  filterBtn.textContent = onlyIllustrated ? "Show All" : "Show Gallery";
+
+  document.querySelectorAll('.poke-card').forEach(card => {
+    if (onlyIllustrated) {
+      // Si el botón está activo, ocultamos los que NO tienen arte
+      card.classList.toggle('hidden', !card.classList.contains('has-art'));
+    } else {
+      // Si no, mostramos todos (respetando si hay algo escrito en el buscador)
+      const q = searchInput.value.toLowerCase().trim();
+      const match = !q || card.dataset.name.includes(q) || card.dataset.num.includes(q);
+      card.classList.toggle('hidden', !match);
+    }
+  });
+
+  // Re-ajustar las cabeceras de región para que no queden vacías
+  REGIONS.forEach(r => {
+    const grid = document.getElementById(r.gridId);
+    const header = document.getElementById(r.headerId);
+    const anyVisible = [...grid.querySelectorAll(".poke-card")].some(c => !c.classList.contains("hidden"));
+    header.style.display = anyVisible ? "" : "none";
+    grid.closest(".grid-wrap").style.display = anyVisible ? "" : "none";
+  });
+});
 </script>
 </body>
 </html>
